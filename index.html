@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Academy CCNA Study Planner</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <div class="brand-block">
+          <div class="brand">
+            <img
+              src="assets/academy.png"
+              alt="Academy logo"
+              class="brand-logo"
+            />
+            <div class="brand-copy">
+              <h1>Academy CCNA Study Planner</h1>
+              <p>
+                Turn the Cisco CCNA roadmap into daily, manageable tasks tailored
+                to your schedule.
+              </p>
+            </div>
+          </div>
+          <div class="plan-actions">
+            <button
+              type="button"
+              class="ghost-button ghost-button--compact is-hidden"
+              id="editPlan"
+            >
+              Edit plan
+            </button>
+            <button
+              type="button"
+              class="ghost-button ghost-button--compact is-hidden"
+              id="exportPlan"
+              disabled
+            >
+              Export as PDF
+            </button>
+            <button
+              type="button"
+              class="ghost-button ghost-button--danger ghost-button--compact"
+              id="resetPlan"
+              disabled
+            >
+              Reset progress
+            </button>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span class="stat-label">Progress</span>
+            <span class="stat-value" id="progressValue">0%</span>
+            <span class="stat-sub" id="progressDetail">0 of 0 tasks done</span>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Tasks Remaining</span>
+            <span class="stat-value" id="tasksRemaining">0</span>
+            <span class="stat-sub" id="tasksPerDayHint">0 per day</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Time Left</span>
+            <span class="stat-value" id="daysRemaining">0</span>
+            <span class="stat-sub" id="deadlineLabel">Deadline — </span>
+          </article>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section
+          class="planner-config"
+          aria-labelledby="plannerSettingsHeading"
+          aria-hidden="false"
+        >
+          <div class="config-header">
+            <div>
+              <h2 id="plannerSettingsHeading">Plan Settings</h2>
+              <p class="config-sub">
+                Choose when you want to start and how aggressive you want the
+                timeline to be.
+              </p>
+            </div>
+          </div>
+          <form id="planForm" class="plan-form">
+            <fieldset class="weekdays-fieldset">
+              <legend class="fieldset-legend">Study days</legend>
+              <p class="fieldset-sub">
+                Pick the days you want this planner to schedule tasks.
+              </p>
+              <div class="weekdays-grid" role="group" aria-label="Available study days">
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="0" />
+                  <span>Sun</span>
+                </label>
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="1" />
+                  <span>Mon</span>
+                </label>
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="2" />
+                  <span>Tue</span>
+                </label>
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="3" />
+                  <span>Wed</span>
+                </label>
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="4" />
+                  <span>Thu</span>
+                </label>
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="5" />
+                  <span>Fri</span>
+                </label>
+                <label class="week-chip">
+                  <input type="checkbox" name="studyDay" value="6" />
+                  <span>Sat</span>
+                </label>
+              </div>
+              <p class="fieldset-summary" id="studyDaysSummary"></p>
+              <p class="fieldset-error" id="studyDaysError" aria-live="polite"></p>
+            </fieldset>
+            <div class="form-row">
+              <label class="field">
+                <span class="field-label">Start date</span>
+                <input type="date" id="startDate" required />
+              </label>
+              <label class="field">
+                <span class="field-label">Target deadline</span>
+                <input type="date" id="endDate" />
+                <small class="field-hint"
+                  >Auto-filled by timeline. Choose custom to edit.</small
+                >
+              </label>
+            </div>
+            <fieldset class="timeline-options">
+              <legend>Timeline</legend>
+              <label class="chip">
+                <input
+                  type="radio"
+                  name="timelineOption"
+                  value="16"
+                  aria-describedby="timeline16Hint"
+                />
+                <span class="chip-label">16 weeks</span>
+                <span class="chip-hint" id="timeline16Hint">4 months pace</span>
+              </label>
+              <label class="chip">
+                <input
+                  type="radio"
+                  name="timelineOption"
+                  value="26"
+                  aria-describedby="timeline26Hint"
+                />
+                <span class="chip-label">26 weeks</span>
+                <span class="chip-hint" id="timeline26Hint">6 months pace</span>
+              </label>
+              <label class="chip">
+                <input
+                  type="radio"
+                  name="timelineOption"
+                  value="36"
+                  aria-describedby="timeline36Hint"
+                />
+                <span class="chip-label">36 weeks</span>
+                <span class="chip-hint" id="timeline36Hint">8 months pace</span>
+              </label>
+              <label class="chip">
+                <input
+                  type="radio"
+                  name="timelineOption"
+                  value="custom"
+                  aria-describedby="timelineCustomHint"
+                />
+                <span class="chip-label">Custom deadline</span>
+                <span class="chip-hint" id="timelineCustomHint">Set any date</span>
+              </label>
+            </fieldset>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Save plan</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="day-grid" aria-live="polite">
+          <article class="day-card" data-day="yesterday">
+            <header class="day-card__header">
+              <span class="day-label">Yesterday</span>
+              <span class="day-date"></span>
+            </header>
+            <ul class="task-list"></ul>
+            <p class="empty-state">No tasks were scheduled.</p>
+          </article>
+          <article class="day-card" data-day="today">
+            <header class="day-card__header">
+              <span class="day-label">Today</span>
+              <span class="day-date"></span>
+            </header>
+            <ul class="task-list"></ul>
+            <p class="empty-state">
+              Choose a start date and timeline to generate your plan.
+            </p>
+          </article>
+          <article class="day-card" data-day="tomorrow">
+            <header class="day-card__header">
+              <span class="day-label">Tomorrow</span>
+              <span class="day-date"></span>
+            </header>
+            <ul class="task-list"></ul>
+            <p class="empty-state">You are all caught up.</p>
+          </article>
+        </section>
+
+        <section class="month-view" aria-labelledby="monthViewHeading">
+          <div class="month-header">
+            <div>
+              <h2 id="monthViewHeading">Month Overview</h2>
+              <p class="month-sub">
+                See how your tasks stack up across the month.
+              </p>
+            </div>
+            <div
+              class="month-controls"
+              role="toolbar"
+              aria-label="Calendar navigation"
+            >
+              <button
+                type="button"
+                class="ghost-button ghost-button--compact"
+                data-month-step="-1"
+                aria-label="Previous month"
+              >
+                Prev
+              </button>
+              <span class="month-label" id="monthLabel">Month</span>
+              <button
+                type="button"
+                class="ghost-button ghost-button--compact"
+                data-month-step="1"
+                aria-label="Next month"
+              >
+                Next
+              </button>
+              <button
+                type="button"
+                class="ghost-button ghost-button--compact"
+                data-month-step="today"
+              >
+                Jump to today
+              </button>
+            </div>
+          </div>
+          <div class="calendar">
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Sun</span>
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+            </div>
+            <div class="calendar-grid" id="monthGrid" role="grid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="taskTemplate">
+      <li class="task-item">
+        <label class="task-check">
+          <input type="checkbox" />
+          <span class="checkmark" aria-hidden="true"></span>
+          <span class="task-copy">
+            <span class="task-title"></span>
+            <span class="task-detail"></span>
+          </span>
+        </label>
+      </li>
+    </template>
+
+    <script type="module" src="planner.js"></script>
+  </body>
+</html>
