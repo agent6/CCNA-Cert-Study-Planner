@@ -92,8 +92,19 @@ function bindEvents() {
   elements.dayGrid?.addEventListener('dragleave', handleDragLeave);
   elements.dayGrid?.addEventListener('dragenter', handleDragEnter);
 
-  elements.startInput?.addEventListener('change', () => {
+  elements.startInput?.addEventListener('change', (e) => {
     syncDeadlineInput();
+    e.target.blur();
+    document.activeElement.blur();
+  });
+
+  elements.endInput?.addEventListener('change', (e) => {
+    const radios = elements.timelineRadios();
+    if (radios) {
+      radios.value = 'custom';
+    }
+    e.target.blur();
+    document.activeElement.blur();
   });
 
   elements.endInput?.addEventListener('input', () => {
@@ -381,7 +392,8 @@ function handleEditPlan() {
   });
 }
 
-function handleResetPlan() {
+function handleResetPlan(e) {
+  if (e) e.preventDefault();
   if (!state) return;
   const hasProgress = state.tasks.some((task) => task.completed);
   if (!hasProgress) {
@@ -1486,8 +1498,7 @@ function renderPlanVisibility(planReady) {
   config.setAttribute('aria-hidden', String(!shouldShow));
 
   if (elements.editButton) {
-    elements.editButton.classList.toggle('is-hidden', !planReady);
-    elements.editButton.disabled = !planReady;
+    elements.editButton.style.display = planReady ? 'inline' : 'none';
     elements.editButton.setAttribute('aria-expanded', String(shouldShow));
     elements.editButton.title = planReady
       ? `Study days: ${formatStudyDaySummary(state.studyDays || defaultStudyDays())}`
@@ -1496,8 +1507,7 @@ function renderPlanVisibility(planReady) {
 
   if (elements.exportButton) {
     const canExport = planReady && !isEditingPlan;
-    elements.exportButton.classList.toggle('is-hidden', !planReady);
-    elements.exportButton.disabled = !canExport;
+    elements.exportButton.style.display = canExport ? 'inline' : 'none';
     elements.exportButton.title = planReady
       ? canExport
         ? 'Download a PDF copy of your plan'
@@ -1506,8 +1516,8 @@ function renderPlanVisibility(planReady) {
   }
 
   if (elements.resetButton) {
-    const hasProgress = state.tasks.some((task) => task.completed);
-    elements.resetButton.disabled = !hasProgress;
+    const hasProgress = state.tasks && state.tasks.some((task) => task.completed);
+    elements.resetButton.style.display = hasProgress ? 'inline' : 'none';
   }
 }
 
@@ -1852,10 +1862,17 @@ function renderMonthView({ schedule, planReady, startDate, deadline, today }) {
 
   elements.month.label.textContent = formatMonthYear(normalizedMonth);
 
+  const monthView = document.getElementById('monthView');
   if (!planReady || !startDate || !deadline) {
-    elements.month.grid.innerHTML =
-      '<div class="calendar-empty">Save your plan to unlock the month view.</div>';
+    if (monthView) {
+      monthView.classList.add('is-locked');
+    }
+    elements.month.grid.innerHTML = '';
     return;
+  }
+
+  if (monthView) {
+    monthView.classList.remove('is-locked');
   }
 
   const calendarStart = startOfWeek(normalizedMonth);

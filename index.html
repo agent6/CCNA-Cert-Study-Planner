@@ -9,46 +9,24 @@
   <body>
     <div class="app">
       <header class="app-header">
-        <div class="brand-block">
-          <div class="brand">
-            <img
-              src="assets/academy.png"
-              alt="Academy logo"
-              class="brand-logo"
-            />
-            <div class="brand-copy">
-              <h1>Academy CCNA Study Planner</h1>
-              <p>
-                Turn the Cisco CCNA roadmap into daily, manageable tasks tailored
-                to your schedule.
-              </p>
-            </div>
+        <div class="brand">
+          <img
+            src="assets/academy.png"
+            alt="Academy logo"
+            class="brand-logo"
+          />
+          <div class="brand-content">
+            <h1>Academy CCNA Study Planner</h1>
+            <p class="brand-description">
+              Turn the Cisco CCNA roadmap into daily, manageable tasks tailored
+              to your schedule.
+            </p>
           </div>
-          <div class="plan-actions">
-            <button
-              type="button"
-              class="ghost-button ghost-button--compact is-hidden"
-              id="editPlan"
-            >
-              Edit plan
-            </button>
-            <button
-              type="button"
-              class="ghost-button ghost-button--compact is-hidden"
-              id="exportPlan"
-              disabled
-            >
-              Export as PDF
-            </button>
-            <button
-              type="button"
-              class="ghost-button ghost-button--danger ghost-button--compact"
-              id="resetPlan"
-              disabled
-            >
-              Reset progress
-            </button>
-          </div>
+        </div>
+        <div class="stats-header">
+          <a href="#" id="editPlan" class="action-link">Edit plan</a>
+          <a href="#" id="exportPlan" class="action-link">Generate PDF</a>
+          <a href="#" id="resetPlan" class="action-link">Reset progress</a>
         </div>
         <div class="stats-grid">
           <article class="stat-card">
@@ -217,7 +195,7 @@
           </article>
         </section>
 
-        <section class="month-view" aria-labelledby="monthViewHeading">
+        <section class="month-view" aria-labelledby="monthViewHeading" id="monthView">
           <div class="month-header">
             <div>
               <h2 id="monthViewHeading">Month Overview</h2>
@@ -267,6 +245,9 @@
               <span>Sat</span>
             </div>
             <div class="calendar-grid" id="monthGrid" role="grid"></div>
+            <div class="calendar-locked" id="calendarLocked">
+              <p>Save your plan to unlock the month view.</p>
+            </div>
           </div>
         </section>
       </main>
